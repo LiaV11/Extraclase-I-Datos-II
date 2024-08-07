@@ -1,4 +1,4 @@
-#include <getopt.h> // Para el manejo de opciones de línea de comandos
+#include <getopt.h>
 #include <iostream>
 #include <string>
 

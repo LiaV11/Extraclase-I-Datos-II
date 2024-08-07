@@ -6,7 +6,7 @@ class PagedArray {
 public:
     PagedArray(const std::string& filePath, size_t elementCount)
         : filePath_(filePath), elementCount_(elementCount), pageSize_(1024 * 1024 / sizeof(int)) {
-        pages_.resize(4); // 4 páginas
+        pages_.resize(4);
         pageLoaded_.resize(4, false);
     }
 

@@ -1,44 +1,31 @@
 #include <iostream>
-#include <string>
-#include "FileGenerator.h"
+#include <fstream>
+#include <cstdlib>
+#include <ctime>
 
-FileGenerator::Size parseSize(const std::string& sizeArg) {
-    if (sizeArg == "SMALL") {
-        return FileGenerator::SMALL;
-    } else if (sizeArg == "MEDIUM") {
-        return FileGenerator::MEDIUM;
-    } else if (sizeArg == "LARGE") {
-        return FileGenerator::LARGE;
-    } else {
-        throw std::invalid_argument("Unknown size: " + sizeArg);
-    }
-}
-
-int main(int argc, char* argv[]) {
-    if (argc != 5) {
-        std::cerr << "Usage: generator -size <SIZE> -output <OUTPUT FILE PATH>" << std::endl;
-        return 1;
+class Generator {
+public:
+    Generator(size_t size, const std::string& outputPath)
+        : size_(size), outputPath_(outputPath) {
+        std::srand(std::time(nullptr)); // Semilla para números aleatorios
     }
 
-    std::string sizeArg, outputFilePath;
-    for (int i = 1; i < argc; i += 2) {
-        std::string arg = argv[i];
-        if (arg == "-size") {
-            sizeArg = argv[i + 1];
-        } else if (arg == "-output") {
-            outputFilePath = argv[i + 1];
+    void generate() {
+        std::ofstream file(outputPath_, std::ios::binary);
+        if (!file) {
+            std::cerr << "Error al abrir el archivo de salida." << std::endl;
+            return;
         }
+
+        for (size_t i = 0; i < size_; ++i) {
+            int num = std::rand();
+            file.write(reinterpret_cast<char*>(&num), sizeof(num));
+        }
+
+        file.close();
     }
 
-    try {
-        FileGenerator::Size size = parseSize(sizeArg);
-        FileGenerator generator(size, outputFilePath);
-        generator.generate();
-        std::cout << "File generated successfully." << std::endl;
-    } catch (const std::exception& e) {
-        std::cerr << "Error: " << e.what() << std::endl;
-        return 1;
-    }
-
-    return 0;
-}
+private:
+    size_t size_;
+    std::string outputPath_;
+};
